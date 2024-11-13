@@ -1,0 +1,128 @@
+import tkinter as tk
+from tkinter import messagebox
+
+# Fungsi Enkripsi
+def enkripsi(plain_text, shift):
+    cipher_text = ""
+    for char in plain_text:
+        if char.isupper():
+            cipher_text += chr((ord(char) + shift - 65) % 26 + 65)
+        elif char.islower():
+            cipher_text += chr((ord(char) + shift - 97) % 26 + 97)
+        else:
+            cipher_text += char
+    return cipher_text
+
+# Fungsi Deskripsi
+def deskripsi(cipher_text, shift):
+    plain_text = ""
+    for char in cipher_text:
+        if char.isupper():
+            plain_text += chr((ord(char) - shift - 65) % 26 + 65)
+        elif char.islower():
+            plain_text += chr((ord(char) - shift - 97) % 26 + 97)
+        else:
+            plain_text += char
+    return plain_text
+
+# Fungsi untuk enkripsi dari GUI
+def enkripsi_text():
+    try:
+        plain_text = entry_plain.get()
+        shift_text = entry_shift.get()
+
+        if not shift_text.isdigit() or int(shift_text) < 1 or int(shift_text) > 25:
+            raise ValueError("Nilai pergeseran harus angka antara 1 dan 25")
+
+        shift = int(shift_text)
+        result = enkripsi(plain_text, shift)
+
+        entry_cipher.delete(0, tk.END)
+        entry_cipher.insert(tk.END, result)
+
+    except ValueError as e:
+        messagebox.showerror("Error", str(e))
+
+# Fungsi untuk deskripsi dari GUI
+def deskripsi_text():
+    try:
+        cipher_text = entry_cipher.get()
+        shift_text = entry_shift.get()
+
+        if not shift_text.isdigit() or int(shift_text) < 1 or int(shift_text) > 25:
+            raise ValueError("Nilai pergeseran harus angka antara 1 dan 25")
+
+        shift = int(shift_text)
+        result = deskripsi(cipher_text, shift)
+
+        entry_plain.delete(0, tk.END)
+        entry_plain.insert(tk.END, result)
+
+    except ValueError as e:
+        messagebox.showerror("Error", str(e))
+
+# Reset fields untuk mulai dari awal
+def reset_fields():
+    entry_plain.delete(0, tk.END)
+    entry_cipher.delete(0, tk.END)
+    entry_shift.delete(0, tk.END)
+
+# Membuat jendela utama
+window = tk.Tk()
+window.title("Caesar Cipher Encryption Program")
+window.state('zoomed')  # Membuka jendela dalam mode layar penuh
+window.configure(bg="#f5f5f5")
+
+# Frame utama untuk tampilan lebih rapi
+frame = tk.Frame(window, bg="#ffffff", padx=40, pady=40, relief="groove", bd=8)
+frame.place(relx=0.5, rely=0.5, anchor='center')
+
+# Gaya font dan warna
+label_font = ("Verdana", 14, "bold")
+entry_font = ("Verdana", 16)
+button_font = ("Verdana", 12, "bold")
+
+# Heading
+heading_label = tk.Label(frame, text="Caesar Cipher Encryption Program", font=("Verdana", 24, "bold"), bg="#ffffff", fg="#1565c0")
+heading_label.grid(row=0, column=0, columnspan=2, pady=(0, 30))
+
+# Label dan entry untuk teks asli
+label_plain = tk.Label(frame, text="Teks Asli:", font=label_font, bg="#ffffff", fg="#0d47a1")
+label_plain.grid(row=1, column=0, padx=15, pady=15, sticky='e')
+entry_plain = tk.Entry(frame, width=50, font=entry_font, bg="#e3f2fd")
+entry_plain.grid(row=1, column=1, padx=15, pady=15)
+
+# Label dan entry untuk nilai shift
+label_shift = tk.Label(frame, text="Nilai Pergeseran (1-25):", font=label_font, bg="#ffffff", fg="#0d47a1")
+label_shift.grid(row=2, column=0, padx=15, pady=15, sticky='e')
+entry_shift = tk.Entry(frame, width=10, font=entry_font, bg="#e3f2fd")
+entry_shift.grid(row=2, column=1, padx=15, pady=15, sticky='w')
+
+# Label dan entry untuk teks terenkripsi
+label_cipher = tk.Label(frame, text="Teks Terenkripsi:", font=label_font, bg="#ffffff", fg="#0d47a1")
+label_cipher.grid(row=3, column=0, padx=15, pady=15, sticky='e')
+entry_cipher = tk.Entry(frame, width=50, font=entry_font, bg="#e3f2fd")
+entry_cipher.grid(row=3, column=1, padx=15, pady=15)
+
+# Tombol Enkripsi
+encrypt_button = tk.Button(frame, text="Enkripsi",
+                           command=enkripsi_text,
+                           font=button_font, bg="#66bb6a", fg="white",
+                           activebackground="#43A047", width=14, height=2)
+encrypt_button.grid(row=4, column=0, padx=15, pady=(30, 15))
+
+# Tombol Deskripsi
+decrypt_button = tk.Button(frame, text="Deskripsi",
+                           command=deskripsi_text,
+                           font=button_font, bg="#42a5f5", fg="white",
+                           activebackground="#1E88E5", width=14, height=2)
+decrypt_button.grid(row=4, column=1, padx=15, pady=(30, 15))
+
+# Tombol Reset
+reset_button = tk.Button(frame, text="Reset",
+                         command=reset_fields,
+                         font=button_font, bg="#ef5350", fg="white",
+                         activebackground="#D32F2F", width=14, height=2)
+reset_button.grid(row=5, column=0, columnspan=2, pady=(15, 0))
+
+window.mainloop()
